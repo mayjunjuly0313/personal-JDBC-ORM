@@ -8,6 +8,7 @@ import java.util.Properties;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import personal.jdbc.orm.model.Customer;
 import personal.jdbc.orm.model.Movie;
+import personal.jdbc.orm.model.WishList;
 
 public class DatabaseManager {
     private Driver driver;
@@ -15,6 +16,7 @@ public class DatabaseManager {
     private CustomerDAO customerDAO;
     private MovieDAO movieDAO;
     private ReviewDAO reviewDAO;
+    private WishListDAO wishListDAO;
 
     private final String url = "jdbc:derby:db/drinksReviewApp";
 
@@ -40,10 +42,15 @@ public class DatabaseManager {
         this.customerDAO = new CustomerDAO(conn, this);
         this.movieDAO = new MovieDAO(conn, this);
         this.reviewDAO = new ReviewDAO(conn, this);
+        this.wishListDAO = new WishListDAO(conn, this);
     }
 
     private void createTables(Connection conn) throws SQLException {
         CustomerDAO.createTable(conn);
+        MovieDAO.createTable(conn);
+        ReviewDAO.createTable(conn);
+        WishListDAO.createTable(conn);
+
         conn.commit();
     }
 

@@ -17,14 +17,14 @@ public class MovieDAO {
         this.cache = new HashMap<>();
     }
 
-    public void createTable(Connection conn) throws SQLException {
+    public static void createTable(Connection conn) throws SQLException {
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE TABLE Movie (");
         sb.append(" MId int,");
         sb.append(" Name varchar(255) NOT NULL,");
         sb.append(" ImageUrl varchar(255) NOT NULL,");
         sb.append(" Category varchar(255) NOT NULL,");
-        sb.append(" private key (MId)");
+        sb.append(" primary key (MId)");
         sb.append(")");
 
         Statement stmt = conn.createStatement();
