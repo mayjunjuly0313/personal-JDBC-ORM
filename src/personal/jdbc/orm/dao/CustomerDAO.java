@@ -19,7 +19,7 @@ public class CustomerDAO {
 
     public static void createTable(Connection conn) throws SQLException {
         StringBuilder sb = new StringBuilder();
-        sb.append("CREATE TABLE Customers (");
+        sb.append("CREATE TABLE Customer (");
         sb.append(" CId varchar(30),");
         sb.append(" Nickname varchar(255) NOT NULL,");
         sb.append(" Email varchar(255) NOT NULL,");
@@ -38,7 +38,7 @@ public class CustomerDAO {
             StringBuilder sb = new StringBuilder();
             sb.append("SELECT c.Nickname, c.Email, c.HashedPassword, c.Description, c.ImageUrl");
             sb.append(" FROM Customer c");
-            sb.append(" WHERE c.Cid = ? ");
+            sb.append(" WHERE c.CId = ? ");
 
             PreparedStatement pstmt = conn.prepareStatement(sb.toString());
             pstmt.setInt(1, cId);
@@ -68,8 +68,8 @@ public class CustomerDAO {
     public Customer insert(int cId, String nickname, String email, int hashedPassword, String description, String imageUrl) {
         try{
             StringBuilder sb = new StringBuilder();
-            sb.append("INSERT into Customer(Cid, Nickname, Email, HashedPassword, Description, ImageUrl)");
-            sb.append(" values(?, ? ?, ?, ?, ?)");
+            sb.append("INSERT into Customer(CId, Nickname, Email, HashedPassword, Description, ImageUrl)");
+            sb.append(" values(?, ?, ?, ?, ?, ?)");
             PreparedStatement pstmt = conn.prepareStatement(sb.toString());
             pstmt.setInt(1, cId);
             pstmt.setString(2, nickname);
@@ -77,7 +77,7 @@ public class CustomerDAO {
             pstmt.setInt(4, hashedPassword);
             pstmt.setString(5, description);
             pstmt.setString(6, imageUrl);
-            ResultSet rs = pstmt.executeQuery();
+            pstmt.executeUpdate();
 
             Customer customer = new Customer(this, cId, nickname, email, hashedPassword, description, imageUrl);
             cache.put(cId, customer);

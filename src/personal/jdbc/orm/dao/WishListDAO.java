@@ -1,4 +1,4 @@
 package personal.jdbc.orm.dao;
 
-public class WishList {
+public class WishListDAO {
 }
