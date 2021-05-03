@@ -20,10 +20,10 @@ public class MovieDAO {
     public void createTable(Connection conn) throws SQLException {
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE TABLE Movie (");
-        sb.append(" MId varchar(30),");
+        sb.append(" MId int,");
         sb.append(" Name varchar(255) NOT NULL,");
         sb.append(" ImageUrl varchar(255) NOT NULL,");
-        sb.append(" Category int NOT NULL,");
+        sb.append(" Category varchar(255) NOT NULL,");
         sb.append(" private key (MId)");
         sb.append(")");
 
@@ -53,6 +53,7 @@ public class MovieDAO {
             String name = rs.getString("Name");
             String imageUrl = rs.getString("ImageUrl");
             String category = rs.getString("Category");
+            rs.close();
 
             Movie movie = new Movie(this, MId, name, imageUrl, category);
             return movie;

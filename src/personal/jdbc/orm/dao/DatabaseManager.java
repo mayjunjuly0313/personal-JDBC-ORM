@@ -3,16 +3,18 @@ package personal.jdbc.orm.dao;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
 import personal.jdbc.orm.model.Customer;
+import personal.jdbc.orm.model.Movie;
 
 public class DatabaseManager {
     private Driver driver;
     private Connection conn;
     private CustomerDAO customerDAO;
+    private MovieDAO movieDAO;
+    private ReviewDAO reviewDAO;
 
     private final String url = "jdbc:derby:db/drinksReviewApp";
 
@@ -36,6 +38,8 @@ public class DatabaseManager {
             }
         }
         this.customerDAO = new CustomerDAO(conn, this);
+        this.movieDAO = new MovieDAO(conn, this);
+        this.reviewDAO = new ReviewDAO(conn, this);
     }
 
     private void createTables(Connection conn) throws SQLException {
@@ -43,7 +47,15 @@ public class DatabaseManager {
         conn.commit();
     }
 
-    private void clearTables(){
+    public Customer getCustomerById(int cId){
+        return customerDAO.findByCustomerId(cId);
+    }
+
+    public Movie getMovieById(int mId){
+        return movieDAO.findByMovieId(mId);
+    }
+
+    public void clearTables(){
         try{
             customerDAO.clear();
         }
@@ -51,7 +63,6 @@ public class DatabaseManager {
             throw new RuntimeException("cannot clear database", e);
         }
     }
-
 
     /**
      * Commit changes since last call to commit

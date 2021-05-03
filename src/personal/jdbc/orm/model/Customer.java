@@ -20,4 +20,8 @@ public class Customer {
         this.desciption = desciption;
         this.imageUrl = imageUrl;
     }
+
+    public int getId(){
+        return this.cid;
+    }
 }

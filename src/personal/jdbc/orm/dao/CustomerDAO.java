@@ -20,7 +20,7 @@ public class CustomerDAO {
     public static void createTable(Connection conn) throws SQLException {
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE TABLE Customer (");
-        sb.append(" CId varchar(30),");
+        sb.append(" CId int,");
         sb.append(" Nickname varchar(255) NOT NULL,");
         sb.append(" Email varchar(255) NOT NULL,");
         sb.append(" HashedPassword int NOT NULL,");

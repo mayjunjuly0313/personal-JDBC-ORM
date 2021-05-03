@@ -16,4 +16,8 @@ public class Movie {
         this.imageUrl = imageUrl;
         this.category = category;
     }
+
+    public int getId(){
+        return this.mId;
+    }
 }
