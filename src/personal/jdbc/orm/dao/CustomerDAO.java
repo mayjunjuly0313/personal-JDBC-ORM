@@ -131,7 +131,7 @@ public class CustomerDAO {
             StringBuilder sb = new StringBuilder();
             sb.append("SELECT c.CId, c.Nickname, c.Email, c.HashedPassword, c.Description, c.ImageUrl");
             sb.append(" FROM Customer c");
-            sb.append(" WHERE c.CId = ?, c.HashedPassword = ?");
+            sb.append(" WHERE c.CId = ? AND c.HashedPassword = ?");
 
             PreparedStatement pstmt = conn.prepareStatement(sb.toString());
             pstmt.setInt(1, customerId);

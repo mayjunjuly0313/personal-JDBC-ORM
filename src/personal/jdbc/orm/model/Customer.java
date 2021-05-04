@@ -24,4 +24,8 @@ public class Customer {
     public int getId(){
         return this.cid;
     }
+
+    public String getNickname(){
+        return this.nickname;
+    }
 }

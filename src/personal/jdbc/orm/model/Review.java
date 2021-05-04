@@ -19,4 +19,20 @@ public class Review {
         this.customer = customer;
         this.movie = movie;
     }
+
+    public int getId(){
+        return this.rId;
+    }
+
+    public int getRating(){
+        return this.rating;
+    }
+
+    public String getComment(){
+        return this.comment;
+    }
+
+    public Movie getMovie(){
+        return this.movie;
+    }
 }

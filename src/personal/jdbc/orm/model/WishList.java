@@ -15,4 +15,12 @@ public class WishList {
         this.customer = customer;
         this.movie = movie;
     }
+
+    public int getId(){
+        return this.wId;
+    }
+
+    public Movie getMovie(){
+        return this.movie;
+    }
 }

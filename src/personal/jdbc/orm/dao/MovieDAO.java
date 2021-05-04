@@ -115,4 +115,11 @@ public class MovieDAO {
             throw new RuntimeException("error getting all movies", e);
         }
     }
+
+    public void clear() throws SQLException {
+        Statement stmt = conn.createStatement();
+        String s = "delete from Movie";
+        stmt.executeUpdate(s);
+        cache.clear();
+    }
 }

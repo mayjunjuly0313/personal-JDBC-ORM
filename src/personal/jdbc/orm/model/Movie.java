@@ -20,4 +20,16 @@ public class Movie {
     public int getId(){
         return this.mId;
     }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public String getImageUrl(){
+        return this.imageUrl;
+    }
+
+    public String getCategory(){
+        return this.category;
+    }
 }

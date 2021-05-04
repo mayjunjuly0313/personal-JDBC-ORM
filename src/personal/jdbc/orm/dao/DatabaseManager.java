@@ -136,7 +136,10 @@ public class DatabaseManager {
 
     public void clearTables(){
         try{
+            reviewDAO.clear();
+            wishListDAO.clear();
             customerDAO.clear();
+            movieDAO.clear();
         }
         catch (SQLException e){
             throw new RuntimeException("cannot clear database", e);

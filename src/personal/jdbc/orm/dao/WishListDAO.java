@@ -125,7 +125,7 @@ public class WishListDAO {
         }
         catch(SQLException e) {
             dbm.cleanup();
-            throw new RuntimeException(String.format("error getting reviews of the custumer {}, msg: ", customerId, e));
+            throw new RuntimeException(String.format("error getting reviews of the custumer id: %d, msg: %s", customerId, e));
         }
     }
 
@@ -134,7 +134,7 @@ public class WishListDAO {
             StringBuilder sb = new StringBuilder();
             sb.append("SELECT w.WId");
             sb.append(" FROM WishList w");
-            sb.append(" WHERE w.CustomerId = ?, w.MovieId = ?");
+            sb.append(" WHERE w.CustomerId = ? AND w.MovieId = ?");
 
             PreparedStatement pstmt = conn.prepareStatement(sb.toString());
             pstmt.setInt(1, customerId);
@@ -155,7 +155,8 @@ public class WishListDAO {
         } catch (SQLException e) {
             dbm.cleanup();
             throw new RuntimeException(
-                    String.format("error getting wishlist of the movie {}, cus {}, msg: ", movieId, customerId, e)
+                    String.format("error getting wishlist of the movie id: %d, customer id: %d, msg: %s",
+                            movieId, customerId, e)
             );
         }
     }
@@ -171,15 +172,25 @@ public class WishListDAO {
             pstmt.setInt(1, movieId);;
             ResultSet rs = pstmt.executeQuery();
 
+            if(!rs.next()){
+                return 0;
+            }
+
             int numWishLists = rs.getInt("1");
-            System.out.println(String.format("numWishLists: {}", numWishLists));
             return numWishLists;
         }
         catch (SQLException e){
             dbm.cleanup();
             throw new RuntimeException(
-                    String.format("error getting avgRating of the movie {}, msg: {}", movieId, e)
+                    String.format("error getting avgRating of the movie id: %d, msg: %s", movieId, e)
             );
         }
+    }
+
+    public void clear() throws SQLException {
+        Statement stmt = conn.createStatement();
+        String s = "delete from WishList";
+        stmt.executeUpdate(s);
+        cache.clear();
     }
 }

@@ -132,7 +132,7 @@ public class ReviewDAO {
         }
         catch(SQLException e) {
             dbm.cleanup();
-            throw new RuntimeException(String.format("error getting reviews of the custumer {}, msg: ", customerId, e));
+            throw new RuntimeException(String.format("error getting reviews of the custumer id: %d, msg: %s", customerId, e));
         }
     }
 
@@ -141,7 +141,7 @@ public class ReviewDAO {
             StringBuilder sb = new StringBuilder();
             sb.append("SELECT r.RId, r.Rating, r.Comment");
             sb.append(" FROM Review r");
-            sb.append(" WHERE r.CustomerId = ?, r.MovieId = ?");
+            sb.append(" WHERE r.CustomerId = ? AND r.MovieId = ?");
 
             PreparedStatement pstmt = conn.prepareStatement(sb.toString());
             pstmt.setInt(1, customerId);
@@ -164,7 +164,7 @@ public class ReviewDAO {
         } catch (SQLException e) {
             dbm.cleanup();
             throw new RuntimeException(
-                    String.format("error getting review of the movie {}, cus {}, msg: {}", movieId, customerId, e)
+                    String.format("error getting review of the movie %d, cus %d, msg: %s", movieId, customerId, e)
             );
         }
     }
@@ -180,14 +180,17 @@ public class ReviewDAO {
             pstmt.setInt(1, movieId);;
             ResultSet rs = pstmt.executeQuery();
 
+            if(!rs.next()){
+                return 0;
+            }
+
             double avgRating = rs.getDouble("1");
-            System.out.println(String.format("avgRating: {}", avgRating));
             return avgRating;
         }
         catch (SQLException e){
             dbm.cleanup();
             throw new RuntimeException(
-                    String.format("error getting avgRating of the movie {}, msg: {}", movieId, e)
+                    String.format("error getting avgRating of the movie id: %d, msg: %s", movieId, e)
             );
         }
     }
@@ -203,15 +206,25 @@ public class ReviewDAO {
             pstmt.setInt(1, movieId);;
             ResultSet rs = pstmt.executeQuery();
 
+            if(!rs.next()){
+                return 0;
+            }
+
             int numReviews = rs.getInt("1");
-            System.out.println(String.format("numReviews: {}", numReviews));
             return numReviews;
         }
         catch (SQLException e){
             dbm.cleanup();
             throw new RuntimeException(
-                    String.format("error getting avgRating of the movie {}, msg: {}", movieId, e)
+                    String.format("error getting avgRating of the movie id: %d, msg: %s", movieId, e)
             );
         }
+    }
+
+    public void clear() throws SQLException {
+        Statement stmt = conn.createStatement();
+        String s = "delete from Review";
+        stmt.executeUpdate(s);
+        cache.clear();
     }
 }
