@@ -3,11 +3,13 @@ package personal.jdbc.orm.dao;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
 import personal.jdbc.orm.model.Customer;
 import personal.jdbc.orm.model.Movie;
+import personal.jdbc.orm.model.Review;
 import personal.jdbc.orm.model.WishList;
 
 public class DatabaseManager {
@@ -54,12 +56,82 @@ public class DatabaseManager {
         conn.commit();
     }
 
+    public Customer addCustomer(int cId, String nickname, String email, int hashedPassword){
+        return customerDAO.insert(cId, nickname, email, hashedPassword);
+    }
+
+    public Movie addMovie(int mId, String name, String imageUrl, String category){
+        return movieDAO.insert(mId, name, imageUrl, category);
+    }
+
+    public Review addReview(int rId, int cId, int mId, int rating, String comment){
+        Customer customer = customerDAO.findByCustomerId(cId);
+        Movie movie = movieDAO.findByMovieId(mId);
+        if( customer != null && movie != null){
+            return reviewDAO.insert(rId, rating, comment, customer, movie);
+        }
+        else{
+            return null;
+        }
+    }
+
+    public WishList addWishList(int wId, int cId, int mId){
+        Customer customer = customerDAO.findByCustomerId(cId);
+        Movie movie = movieDAO.findByMovieId(mId);
+        if( customer != null && movie != null){
+            return wishListDAO.insert(wId, customer, movie);
+        }
+        else{
+            return null;
+        }
+    }
+
+    public boolean customerAuthentication(int customerId, int password){
+        return customerDAO.authentication(customerId, password);
+    }
+
     public Customer getCustomerById(int cId){
         return customerDAO.findByCustomerId(cId);
     }
 
     public Movie getMovieById(int mId){
         return movieDAO.findByMovieId(mId);
+    }
+
+    public Collection<Customer> getAllCustomer(){
+        return customerDAO.getAll();
+    }
+
+    public Collection<Movie> getAllMovie(){
+        return movieDAO.getAll();
+    }
+
+    public Collection<Review> getReviewsByCustomerId(int cId){
+        return reviewDAO.getReviewsByCustomerId(cId);
+    }
+
+    public Review getReviewsByCIdAndMId(int cId, int mId){
+        return reviewDAO.getReviewByCIdAndMId(cId, mId);
+    }
+
+    public Collection<WishList> getWishListsByCustomerId(int cId){
+        return wishListDAO.getWishListsByCustomerId(cId);
+    }
+
+    public WishList getWishListByCIdAndMId(int cId, int mId){
+        return wishListDAO.getWishListByCIdAndMId(cId, mId);
+    }
+
+    public double getAvgRatingOfMovie(int mId){
+        return reviewDAO.getAvgRatingOfMoive(mId);
+    }
+
+    public int getNumReviewOfMovie(int mId){
+        return reviewDAO.getNumReviewsOfMoive(mId);
+    }
+
+    public int getNumWishListOfMovie(int mId){
+        return wishListDAO.getNumWishListsOfMoive(mId);
     }
 
     public void clearTables(){
