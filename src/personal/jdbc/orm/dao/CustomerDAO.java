@@ -3,6 +3,8 @@ package personal.jdbc.orm.dao;
 import personal.jdbc.orm.model.Customer;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,9 @@ public class CustomerDAO {
     }
 
     public Customer findByCustomerId(int cId){
+        if(cache.containsKey(cId)){
+            return cache.get(cId);
+        }
         try{
             StringBuilder sb = new StringBuilder();
             sb.append("SELECT c.Nickname, c.Email, c.HashedPassword, c.Description, c.ImageUrl");
@@ -65,8 +70,10 @@ public class CustomerDAO {
         }
     }
 
-    public Customer insert(int cId, String nickname, String email, int hashedPassword, String description, String imageUrl) {
+    public Customer insert(int cId, String nickname, String email, int hashedPassword) {
         try{
+            String description = "default description";
+            String imageUrl = "default customer image";
             StringBuilder sb = new StringBuilder();
             sb.append("INSERT into Customer(CId, Nickname, Email, HashedPassword, Description, ImageUrl)");
             sb.append(" values(?, ?, ?, ?, ?, ?)");
@@ -89,7 +96,62 @@ public class CustomerDAO {
         }
     }
 
-    void clear() throws SQLException {
+    public Collection<Customer> getAll(){
+        try{
+            Collection<Customer> customers = new ArrayList<>();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("SELECT c.CId, c.Nickname, c.Email, c.HashedPassword, c.Description, c.ImageUrl");
+            sb.append(" FROM Customer c");
+
+            PreparedStatement pstmt = conn.prepareStatement(sb.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                int cId = rs.getInt("CId");
+                String nickname = rs.getString("Nickname");
+                String email = rs.getString("Email");
+                int hashedPassword = rs.getInt("HashedPassword");
+                String description = rs.getString("Description");
+                String imageUrl = rs.getString("ImageUrl");
+
+                Customer customer = new Customer(this, cId, nickname, email, hashedPassword, description, imageUrl);
+                customers.add(customer);
+            }
+            return customers;
+        }
+        catch(SQLException e){
+            dbm.cleanup();
+            throw new RuntimeException("error getting all customers", e);
+        }
+    }
+
+    public boolean authentication(int customerId, int password){
+        try{
+            StringBuilder sb = new StringBuilder();
+            sb.append("SELECT c.CId, c.Nickname, c.Email, c.HashedPassword, c.Description, c.ImageUrl");
+            sb.append(" FROM Customer c");
+            sb.append(" WHERE c.CId = ?, c.HashedPassword = ?");
+
+            PreparedStatement pstmt = conn.prepareStatement(sb.toString());
+            pstmt.setInt(1, customerId);
+            pstmt.setInt(2, password);
+            ResultSet rs = pstmt.executeQuery();
+
+            if(!rs.next()){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+        catch(SQLException e){
+            dbm.cleanup();
+            throw new RuntimeException("error authenticating customer", e);
+        }
+    }
+
+    public void clear() throws SQLException {
         Statement stmt = conn.createStatement();
         String s = "delete from Customer";
         stmt.executeUpdate(s);
